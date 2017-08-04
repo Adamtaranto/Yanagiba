@@ -22,8 +22,5 @@ a quality score > 10 and length >= 1000bp.
 Finally, clip 50 bp from either end of the retained reads and write to "trimmedreads.fastq" 
 
 `
-./yanagiba.py --minlen 1000 --headtrim 50 --tailtrim 50 --minqual 10 \
---summaryfile summary.txt \
---infile albacoreReads.fastq.gz \
---outfile trimmedreads.fastq
+./yanagiba.py --minlen 1000 --headtrim 50 --tailtrim 50 --minqual 10 --summaryfile summary.txt --infile albacoreReads.fastq.gz --outfile trimmedreads.fastq
 `
