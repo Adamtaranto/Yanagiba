@@ -57,7 +57,7 @@ def mainArgs():
 												help='Input fastq.gz file.')
 		parser.add_argument('-o','--outfile',
 												type=str,
-												default="filtered.fastq.gz",
+												default="filtered.fastq.bgz",
 												help='Write filtered reads to this file in .bgz format.')
 		parser.add_argument('--headtrim',
 												type=int,
