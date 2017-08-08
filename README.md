@@ -6,7 +6,8 @@ Yanagiba is used to filter short or low quality Oxford Nanopore
 reads which have been basecalled with Albacore.
 Takes fastq.gz and an Albacore summary file as input.
 
-If you need to filter nanopore fastq reads without an Albacore summary file check out [NanoFilt](https://github.com/wdecoster/nanofilt).
+If no Albacore summary file is provided attempt to calculate mean qscore from directly from fastq file using [NanoMath](https://github.com/wdecoster/nanomath).
+*Note:* Calculated quality scores appear to be lower for reads called with Metrichor, you may need to lower your minqual setting in this case.
 
 **Input requirements:**
 

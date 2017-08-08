@@ -11,8 +11,9 @@
 
 import argparse
 import gzip
-from Bio import SeqIO, bgzf
 import pandas
+from Bio import SeqIO, bgzf
+from nanomath import aveQual
 
 def getTargets(summaryfile,minlen,minqual):
 	df = pandas.read_csv(summaryfile, sep='\t', header=0)
@@ -20,7 +21,22 @@ def getTargets(summaryfile,minlen,minqual):
 	keeplist = keep['read_id'].tolist()
 	return keeplist
 
-def filterReads(infile,outfile,keeplist,headtrim,tailtrim,forceuniq=False):
+def directFilter(infile,outfile,minqual=0,minlen=0,headtrim=None,tailtrim=None,forceuniq=False):
+	seen = list()
+	total = 0
+	with gzip.open(infile, "rt") as handle, bgzf.BgzfWriter(outfile, "wb") as output_handle:
+		for record in SeqIO.parse(handle, "fastq"):
+			total += 1
+			if aveQual(record.letter_annotations["phred_quality"]) > minqual and len(record) > minlen:
+				if not forceuniq:
+					seen.append(record.id)
+					SeqIO.write(record[headtrim:tailtrim], handle=output_handle, format="fastq")
+				elif (forceuniq and record.id not in seen):
+					seen.append(record.id)
+					SeqIO.write(record[headtrim:tailtrim], handle=output_handle, format="fastq")
+	print("Saved %s records out of %s records seen." % (len(seen),str(total)) )
+
+def filterReads(infile,outfile,keeplist=None,headtrim=None,tailtrim=None,forceuniq=False):
 	seen = list()
 	with gzip.open(infile, "rt") as handle, bgzf.BgzfWriter(outfile, "wb") as output_handle:
 		for record in SeqIO.parse(handle, "fastq"):
@@ -47,7 +63,6 @@ def mainArgs():
 												help='Minimum quality score to retain a read. Default: 10')
 		parser.add_argument('-s','--summaryfile',
 												type=str,
-												required=True,
 												default=None,
 												help='Albacore summary file with header row.')
 		parser.add_argument('-i','--infile',
@@ -75,13 +90,18 @@ def mainArgs():
 		return args
 
 def main(args):
-	# Convert tail trim len to neg int if set
+	# Convert tail trim len to neg int if set.
 	if args.tailtrim:
 		tailtrim = args.tailtrim * -1
-	# Get names of reads which pass filter
-	keeplist = getTargets(args.summaryfile,args.minlen,args.minqual)
-	# Read in fastq.gz, keep records which passed filter and trim is required
-	filterReads(args.infile,args.outfile,keeplist,args.headtrim,tailtrim,forceuniq=args.forceunique)
+	# Preferentially source read information from summary file.
+	if args.summaryfile:
+		# Get names of reads which pass filter.
+		keeplist = getTargets(args.summaryfile,args.minlen,args.minqual)
+		# Read in fastq.gz, keep records which passed filter and trim is required.
+		filterReads(args.infile,args.outfile,keeplist=keeplist,headtrim=args.headtrim,tailtrim=tailtrim,forceuniq=args.forceunique)
+	else:
+		# If no summary file provided, attempt to calculate quality scores directly from fastq using nanomath.
+		directFilter(args.infile,args.outfile,minqual=args.minqual,minlen=args.minlen,headtrim=args.headtrim,tailtrim=tailtrim,forceuniq=args.forceunique)
 
 if __name__== '__main__':
 	args = mainArgs()
