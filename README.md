@@ -6,7 +6,7 @@ Yanagiba is used to filter short or low quality Oxford Nanopore
 reads which have been basecalled with Albacore.
 Takes fastq.gz and an Albacore summary file as input.
 
-If you need to filter nanopore fastq reads without an Albacore summary file check out [NanoFIlt](https://github.com/wdecoster/nanofilt).
+If you need to filter nanopore fastq reads without an Albacore summary file check out [NanoFilt](https://github.com/wdecoster/nanofilt).
 
 **Input requirements:**
 
@@ -25,7 +25,9 @@ Finally, clip 50 bp from either end of the retained reads and write to "trimmedr
 
 `
 ./yanagiba.py --minlen 1000 --headtrim 50 --tailtrim 50 --minqual 10 --summaryfile summary.txt --infile albacoreReads.fastq.gz --outfile trimmedreads.fastq.bgz
-`
+`  
+
+
 *Note:* Output files are in fastq.bgz compressed format. Unzip with:
 
 `
@@ -37,19 +39,19 @@ gunzip -c trimmedreads.fastq.bgz > trimmedreads.fastq
   - **-h / --help**  
     - Show this help message and exit
   - **-l / --minlen **
-    - Exclude reads shorter than this length. Default: 0
+    - Exclude reads shorter than this length. *Default: 0*
   - **-q / --minqual**  
-    - Minimum quality score to retain a read. Default: 10
-  - **-s / --summaryfile** SUMMARYFILE
+    - Minimum quality score to retain a read. *Default: 10*
+  - **-s / --summaryfile**
     - Albacore summary file with header row.
   - **-i / --infile**  
     - Input fastq.gz file.
   - **-o / --outfile**  
-    - Write filtered reads to this file in .bgz format. Default: "filtered.fastq.bgz"
+    - Write filtered reads to this file in .bgz format. *Default: "filtered.fastq.bgz"*
   - **--headtrim** 
-    - Trim x bases from begining of each read. Default: 0
+    - Trim x bases from begining of each read. *Default: 0*
   - **--tailtrim** 
-    - Trim x bases from end of each read. Default: None
+    - Trim x bases from end of each read. *Default: None*
   - **-u / --forceunique**     
     - Enforce unique reads. Only store first instance of a read 
     from fastq input where readID occurs multiple times. Default: Off
