@@ -19,7 +19,7 @@ install_requires = [
   'biopython>=1.70',
 ]
 
-desc = """Filterilter short or low quality Oxford Nanopore reads which have been basecalled with Albacore."""
+desc = """Filter short or low quality Oxford Nanopore reads which have been basecalled with Albacore."""
 
 setup(name='yanagiba',
       version='0.1.0',
