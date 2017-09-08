@@ -15,8 +15,8 @@ pypi_classifiers = [
 
 install_requires = [
 	"nanomath",
-    "pandas>=0.20.3",
-    'biopython>=1.70',
+  "pandas>=0.20.3",
+  'biopython>=1.70',
 ]
 
 desc = """Filterilter short or low quality Oxford Nanopore reads which have been basecalled with Albacore."""
@@ -34,4 +34,9 @@ setup(name='yanagiba',
       install_requires=install_requires,
       include_package_data=True,
       zip_safe=False,
+      entry_points={
+        'console_scripts': [
+            'yanagiba=yanagiba.cmd_line:main',
+        ],
+    },
     )
