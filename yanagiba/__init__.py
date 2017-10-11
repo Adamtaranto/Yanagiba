@@ -10,7 +10,7 @@
 import gzip
 import pandas
 from Bio import SeqIO, bgzf
-from nanomath import aveQual
+from nanomath import ave_qual
 
 def getTargets(summaryfile,minlen,minqual):
 	df = pandas.read_csv(summaryfile, sep='\t', header=0)
@@ -24,7 +24,7 @@ def directFilter(infile,outfile,minqual=0,minlen=0,headtrim=None,tailtrim=None,f
 	with gzip.open(infile, "rt") as handle, bgzf.BgzfWriter(outfile, "wb") as output_handle:
 		for record in SeqIO.parse(handle, "fastq"):
 			total += 1
-			if aveQual(record.letter_annotations["phred_quality"]) > minqual and len(record) > minlen:
+			if ave_qual(record.letter_annotations["phred_quality"]) > minqual and len(record) > minlen:
 				if not forceuniq:
 					seen.append(record.id)
 					SeqIO.write(record[headtrim:tailtrim], handle=output_handle, format="fastq")
